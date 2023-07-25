@@ -150,14 +150,6 @@ export function help(): void {
         <h2>Distance :d[0-1000]</h2>
             Default setting is 100. Enter <b>:d1-5</b> to set the approximate distance matching aka. Fuzzy Search Distance wich  determines how close the match must be to the fuzzy location from 0-1000 words where 0 is an exact match.
     </div>
-    <div>
-        <h2>Api</h2>
-            The following endpoint is available.<br>
-            <code>/api/get/strings/cats</code>
-            where cats is optional, for example<br>
-            <code>/api/get/DA TA BA SE/5</code>
-            will produce <a href="/s=DA TA BA SE">this</a> outout.       
-    </div>
     
 `
 }
