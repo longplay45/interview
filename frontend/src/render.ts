@@ -1,3 +1,5 @@
+// render.js
+
 import * as elements from "./elements.js";
 import { getSearchFieldValue, searchMe } from "./search.js";
 import { addCategoryListeners } from "./events.js";
