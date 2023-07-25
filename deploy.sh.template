@@ -1,0 +1,12 @@
+rm -rf build
+mkdir build
+mkdir build/public
+npm run frontend:build
+cp -R frontend/dist/* build/public
+cp -R backend/* build
+rm -rf build/__pycache__
+rm build/interview.ini.template
+rm build/requirements.txt
+
+# edit
+# scp -r interview/build/* <<USERNAME>>@<<DOMAIN>>/<<WWWPATH>>/interview
