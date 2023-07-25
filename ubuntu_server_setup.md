@@ -2,9 +2,9 @@
 
 ## Nginx + SSL + python
 
-### Image
+### Boot into
 
-#### ubuntu 20.04.6 lts (focal fossa) - minimal
+ubuntu 20.04.6 lts (focal fossa) - minimal
 
 ### Setup steps
 
