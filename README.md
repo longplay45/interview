@@ -56,7 +56,7 @@ Having `python` and `node.js` installed...
     npm run deploy
 ```
 
-## Deploy on Umbuntu 20 an higher.
+## Deploy on Ubuntu 20 an higher.
 
 For a detailed server setup running nginx with python check out: [ubuntu_server_setup.md](ubuntu_server_setup.md)
 
@@ -70,4 +70,4 @@ For a detailed server setup running nginx with python check out: [ubuntu_server_
 
 ## License
 
-Copyleft /-right IN5O 2023.
+Copyleft /-right netzwerkerei@gmail.com 2023.
