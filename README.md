@@ -52,7 +52,7 @@ Having `python` and `node.js` installed...
 # backend
     npm run backend:dev
 
-# app
+# deployment
     npm run deploy
 ```
 
