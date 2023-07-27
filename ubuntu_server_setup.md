@@ -268,5 +268,5 @@ sudo systemctl restart nginx
 
 ## Author
 
-Copyleft /-right IN5O 2023.
+Copyleft /-right netzwerkerei@gmail.com 2023.
 
