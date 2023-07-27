@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .header,
+    .footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #f2f2f2;
+      transition: background-color 0.3s ease;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 800px;
+      width: 100%;
+      margin: 20px auto;
+    }
+
+    .column {
+      background-color: #f9f9f9;
+      padding: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .column h2 {
+      font-weight: 500;
+      font-size: 20px;
+      transition: font-size 0.3s ease;
+    }
+
+    .column:hover {
+      background-color: #eaeaea;
+    }
+
+    .column:hover h2 {
+      font-size: 22px;
+    }
+
+    .image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .column:hover .image {
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 767px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Header</h1>
+  </div>
+  <div class="container">
+    <div class="column">
+      <h2>Column 1</h2>
+      <img class="image" src="image1.jpg" srcset="image1.jpg 1x, image1@2x.jpg 2x" alt="Image 1">
+      <p>This is the content of column 1.</p>
+    </div>
+    <div class="column">
+      <h2>Column 2</h2>
+      <img class="image" src="image2.jpg" srcset="image2.jpg 1x, image2@2x.jpg 2x" alt="Image 2">
+      <p>This is the content of column 2.</p>
+    </div>
+    <div class="column">
+      <h2>Column 3</h2>
+      <img class="image" src="image3.jpg" srcset="image3.jpg 1x, image3@2x.jpg 2x" alt="Image 3">
+      <p>This is the content of column 3.</p>
+    </div>
+    <div class="column">
+      <h2>Column 4</h2>
+      <img class="image" src="image4.jpg" srcset="image4.jpg 1x, image4@2x.jpg 2x" alt="Image 4">
+      <p>This is the content of column 4.</p>
+    </div>
+    <div class="column">
+      <h2>Column 5</h2>
+      <img class="image" src="image5.jpg" srcset="image5.jpg 1x, image5@2x.jpg 2x" alt="Image 5">
+      <p>This is the content of column 5.</p>
+    </div>
+    <div class="column">
+      <h2>Column 6</h2>
+      <img class="image" src="image6.jpg" srcset="image6.jpg 1x, image6@2x.jpg 2x" alt="Image 6">
+      <p>This is the content of column 6.</p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>Footer</p>
+  </div>
+</body>
+</html>
