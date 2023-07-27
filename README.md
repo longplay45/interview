@@ -51,12 +51,9 @@ Having `python` and `node.js` installed...
 
 # backend
     npm run backend:dev
-    npm run backend:build:deployment
-    npm run backend:build:release
 
 # app
-    npm run app:dev
-    npm run app:deploy
+    npm run deploy
 ```
 
 ## Deploy on Umbuntu 20 an higher.
@@ -68,7 +65,8 @@ For a detailed server setup running nginx with python check out: [ubuntu_server_
 - Implement `searchTerm` logging
 - Inline editing
 - Optimize content
-- ...
+- df-Backend-Data-Layer
+--
 
 ## License
 
