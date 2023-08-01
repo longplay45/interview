@@ -64,9 +64,10 @@ For a detailed server setup running nginx with python check out: [ubuntu_server_
 
 - Implement `searchTerm` logging
 - Inline editing
-- Optimize content
+- Generete
+  - Terms
+  - Content
 - df-Backend-Data-Layer
---
 
 ## License
 
