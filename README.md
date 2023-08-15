@@ -68,6 +68,11 @@ For a detailed server setup running nginx with python check out: [ubuntu_server_
   - Terms
   - Content
 - df-Backend-Data-Layer
+<<<<<<< Updated upstream
+=======
+- UserAuthentification 
+--
+>>>>>>> Stashed changes
 
 ## License
 

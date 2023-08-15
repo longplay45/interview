@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+</head>
+<body>
+    <div class='code'><pre><code class="python">
+def calculate_mode(data):
+    mode_count = 0
+    mode = None
+    
+    for value in data:
+        count = data.count(value)
+        if count > mode_count:
+            mode_count = count
+            mode = value
+    
+    return mode
+
+data = [1, 2, 2, 3, 3, 3, 4, 4, 5]
+mode = calculate_mode(data)
+print(mode)
+    </code></pre></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

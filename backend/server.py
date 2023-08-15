@@ -10,7 +10,6 @@ args = parser.parse_args()
 
 RELOAD = args.reload
 
-
 def start_server(
     host="127.0.0.1", port=8000, num_workers=4, loop="asyncio", reload=RELOAD
 ):
