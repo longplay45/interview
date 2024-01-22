@@ -11,7 +11,7 @@ args = parser.parse_args()
 RELOAD = args.reload
 
 def start_server(
-    host="127.0.0.1", port=8000, num_workers=4, loop="asyncio", reload=RELOAD
+    host="127.0.0.1", port=9876, num_workers=4, loop="asyncio", reload=RELOAD
 ):
     uvicorn.run(
         "api:app", host=host, port=port, workers=num_workers, loop=loop, reload=reload

@@ -1,9 +1,10 @@
 # files
 deploy.sh
-interview.ini
 
 # folders
 data
+backend/
+development/
 frontend/dev
 frontend/dist
 

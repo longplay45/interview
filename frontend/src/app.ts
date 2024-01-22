@@ -6,9 +6,8 @@ import { renderCategories } from "./render";
 import { initEventListeners } from "./events";
 
 
-// development settings
-let url:string = '/api/entries'
-if (location.port == '1234') url = '/data.json'
+// data source
+let url:string = '/data.json'
 
 function init(){
     /**

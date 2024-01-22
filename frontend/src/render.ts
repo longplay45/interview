@@ -20,6 +20,11 @@ export function renderCategories(): void {
         ul.appendChild(li);
     });
 
+    const li = document.createElement('li');
+    li.classList.add('cat');
+    li.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://lp45.net/imprint/">Imprint</a>';
+    ul.appendChild(li);
+
     const elm = document.getElementById('categories');
     if (elm != null) {
         elm.innerHTML = '';
@@ -34,6 +39,7 @@ export function toggleCategory(event: any): void {
 }
 
 export function toggleCat(category: string): void {
+    console.log('category: ', category)
     const index = globalThis.CATS_SELECTED.indexOf(category)
 
     if (index > -1) {
@@ -91,66 +97,16 @@ export function help(): void {
     </div>
     <div>
         <h2>Browse *</h2>
-            Be typing an * (Asterix) you enter the browsing mode diplaying all entries depending on the selected categories.
+            By typing an * (Asterix) you enter the browsing mode diplaying all entries depending on the selected categories.
     </div>
     <div>
-        <h2>Categories <code>:c[1-${globalThis.CATS.length}]</code></h2>
+        <h2>Toggle Categories</h2>
             Enter <b><code>:c[1-${globalThis.CATS.length}]</code></b> to toggle the categories, where<b><code>:c0</code></b> toggles them all on/off. For example <code>:c2</code> toogles the second category on off.
     </div>
     <div>
-        <h2>Settings</h2>
-            All parameter can be set via mouse interaction or shortcuts.
-    </div>
-    <div>
-        <h2>Fuzzy search</h2>
-        <table>
-            <tr>
-                <td>Token</td>
-                <td>Description</td>
-            </tr>
-            <tr>
-                <td><code>jscript</code></td>
-                <td>Items that fuzzy match <code>jscript</code></td>
-            </tr>
-            <tr>
-                <td><code>=scheme</code></td>
-                <td>Items that are <code>scheme</code></td>
-            </tr>
-            <tr>
-                <td><code>'python</code></td>
-                <td>Items that include <code>python</code></td>
-            </tr>
-            <tr>
-                <td><code>!ruby</code></td>
-                <td>Items that do not include <code>ruby</code></td>
-            </tr>
-            <tr>
-                <td><code>^java</code></td>
-                <td>Items that start with <code>java</code></td>
-            </tr>
-            <tr>
-                <td><code>!^earlang</code></td>
-                <td>Items that do not start with <code>earlang</code></td>
-            </tr>
-            <tr>
-                <td><code>.js$</code></td>
-                <td>Items that end with <code>.js</code></td>
-            </tr>
-            <tr>
-                <td><code>!.go$</code></td>
-                <td>Items that do not end with <code>.go</code></td>
-            </tr>
-        </table>
-    </div>
-    <div>
-        <h2>Threshold :t[0-9]</h2>
-            Default setting is 6. Enter <b>:t1-5</b> to set the approximate string matching aka. Fuzzy Search Threshold from 0-9 where 0 is an exact match.
-    </div>
-    <div>
-        <h2>Distance :d[0-1000]</h2>
-            Default setting is 100. Enter <b>:d1-5</b> to set the approximate distance matching aka. Fuzzy Search Distance wich  determines how close the match must be to the fuzzy location from 0-1000 words where 0 is an exact match.
-    </div>
-    
+        <h2>Threshold</h2>
+            The default threshold is set to 6. Use <b><code>:t0-9</code></b> to adjust the fuzzy search threshold from 0 to 9, where 0 represents an exact match.
+    </div>   
 `
 }
 

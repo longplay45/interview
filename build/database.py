@@ -42,17 +42,20 @@ INNER JOIN category c
 ORDER BY RANDOM()
 LIMIT 1;"""
 
+
 def connect():
-    params = config(section='sqlite3')
-    con = sqlite3.connect(params['database'])
+    params = config(section="sqlite3")
+    con = sqlite3.connect(params["database"])
     # params = config(section='postgresql')
     # con = psycopg2.connect(**params)
     return con
+
 
 def init():
     con = connect()
     with con as cursor:
         cursor.execute(open("schema.sql", "r").read())
+
 
 def exe(stmt):
     con = connect()
