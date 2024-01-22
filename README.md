@@ -33,6 +33,7 @@ Having `node.js` installed...
 # clone source code
 git clone https://github.com/netzwerkerei/interview.git
 cd interview
+npm i
 
 # development
 
