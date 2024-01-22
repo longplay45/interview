@@ -1,7 +1,7 @@
 
 # [ INTERVIEW ] - Real-time Knowledgebase
 
-**INTERVIEW**  is an innovative prototype of a real-time knowledgebase interface, created for quick and intuitive access to complex information resources. This dataset encompasses a glossary covering data analytics, engineering, and science, along with categories such as BI, DA, ML, Python, and SQL.
+**INTERVIEW**  is an innovative prototype of a real-time knowledgebase interface, created for quick and intuitive access to complex information resources. This dataset encompasses a glossary covering data analytics, engineering, and science, along with categories such as BI, DA, Excel, ML, Python, and SQL.
 
 ## Beta preview
 
