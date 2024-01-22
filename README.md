@@ -5,7 +5,7 @@
 
 ## Beta preview
 
-<https://interview.dev.lp45.net>
+[https://interview.dev.lp45.net](https://interview.dev.lp45.net)
 
 ## Screenshots
 
