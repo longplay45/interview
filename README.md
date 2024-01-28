@@ -63,7 +63,7 @@ npm i
 npm run
 
 # frontend
-npm run frontend:dev
+npm run development
 npm run frontend:build    
 
 # deployment
@@ -88,4 +88,4 @@ Just create a data.json file with the following schema:
 
 ## License
 
-Copyleft /-right hello@lp45.net 2023.
+Copyleft /-right hello@lp45.net 2024.
