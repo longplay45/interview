@@ -15,6 +15,28 @@
 
 ![screenshot3](screenshot3.png)
 
+## Shortcuts
+
+|Key sequence|Effect|
+|-|-|
+|:h|Display help|
+|*|Browser whole dataset|
+|:t0|Set fuzzy search threshold between 0 and 9, where 0 is an exact match|
+|:c0|Toggle all categories on/off|
+|:c[n]|toggle single categorie on/off. Replace [n] with category-nr. counting from left to right. So :c3 whould toggle the third category in your dataset from the right.|
+
+## Dataset
+
+This dataset with a total of 1259 entries in six categories was generated using an augmented dolphin-mistral model. Entries:
+
+* 167 BI
+* 170 DA
+* 153 Excel
+* 359 ML
+* 161 Python
+* 249 SQL
+
+Last updated: 2024-01-28
 
 ## Languages and helpers
 

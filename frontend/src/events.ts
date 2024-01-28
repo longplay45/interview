@@ -6,11 +6,17 @@ import * as keymap from "./keymap"
 
 
 export function initEventListeners(): void {
+    addHelpListeners()
     addCategoryListeners()
     addKeyUpListeners()
     addKeyDownListeners()
     addThresholdSliderListener()
 
+}
+
+export function addHelpListeners(): void {
+    const helpElement = document.getElementById('help')
+    helpElement?.addEventListener('click', render.help)
 }
 
 export function addCategoryListeners(): void {

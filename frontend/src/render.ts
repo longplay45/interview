@@ -2,7 +2,7 @@
 
 import * as elements from "./elements.js";
 import { getSearchFieldValue, searchMe } from "./search.js";
-import { addCategoryListeners } from "./events.js";
+import { addCategoryListeners, addHelpListeners } from "./events.js";
 import { highlightSearchString } from "./highlight.js";
 
 export function renderCategories(): void {
@@ -22,7 +22,8 @@ export function renderCategories(): void {
 
     const li = document.createElement('li');
     li.classList.add('cat');
-    li.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://lp45.net/imprint/">Imprint</a>';
+    li.id = 'help';
+    li.textContent = 'Help';
     ul.appendChild(li);
 
     const elm = document.getElementById('categories');
@@ -48,6 +49,7 @@ export function toggleCat(category: string): void {
         globalThis.CATS_SELECTED.push(category)
     }
     renderCategories()
+    addHelpListeners()
     addCategoryListeners()
     renderSearchResults(searchMe(getSearchFieldValue()))
     if (globalThis.CATS_SELECTED < 1) elements.container.innerHTML = ''
@@ -105,8 +107,22 @@ export function help(): void {
     </div>
     <div>
         <h2>Threshold</h2>
-            The default threshold is set to 6. Use <b><code>:t0-9</code></b> to adjust the fuzzy search threshold from 0 to 9, where 0 represents an exact match.
+            The default threshold is set to 6. Use the megenta slider above or keycode <b><code>:t[0-9]</code></b> to adjust the fuzzy search threshold from 0 to 9, where 0 represents an exact match.
     </div>   
+    <div>
+        <h2>Dataset</h2>
+            This dataset with a total of 1259 entries in six categories was generated using an augmented dolphin-mistral model. Having 167 BI, 170 DA, 153 Excel, 359 ML, 161 Python and 249 SQL-entries. Last updated: 2024-01-28
+    </div>  
+
+    <div>
+        <h2>Copyleft & -right</h2>
+            This project and dataset is licensed under the <a class='help' href="https://github.com/longplay45/interview/blob/main/LICENSE">MIT License</a>. The source code is available on <a class='help' href="https://github.com/longplay45/interview">GitHub</a>.
+    </div> 
+    
+    <div>
+        <h2>Legals</h2>
+            Find out more about the project: <a class='help' href="https://lp45.net/imprint/">Imprint</a>.
+    </div> 
 `
 }
 
