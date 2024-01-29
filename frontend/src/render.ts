@@ -32,6 +32,8 @@ export function renderCategories(): void {
         elm.appendChild(ul);
 
     }
+    addHelpListeners()
+    addCategoryListeners()
 }
 
 export function toggleCategory(event: any): void {
@@ -94,36 +96,37 @@ export function renderSearchResults(data: any[]): void {
 export function help(): void {
     elements.container.innerHTML = `
     <div>
-        <h2>Search</h2>
-            Just start typing and we'll be fuzzysearching the best we can, to get you straight to your answer.
-    </div>
-    <div>
-        <h2>Browse *</h2>
-            By typing an * (Asterix) you enter the browsing mode diplaying all entries depending on the selected categories.
-    </div>
-    <div>
-        <h2>Toggle Categories</h2>
-            Enter <b><code>:c[1-${globalThis.CATS.length}]</code></b> to toggle the categories, where<b><code>:c0</code></b> toggles them all on/off. For example <code>:c2</code> toogles the second category on off.
-    </div>
-    <div>
-        <h2>Threshold</h2>
-            The default threshold is set to 6. Use the megenta slider above or keycode <b><code>:t[0-9]</code></b> to adjust the fuzzy search threshold from 0 to 9, where 0 represents an exact match.
-    </div>   
-    <div>
-        <h2>Dataset</h2>
-            This dataset with a total of 1259 entries in six categories was generated using an augmented dolphin-mistral model. Having 167 BI, 170 DA, 153 Excel, 359 ML, 161 Python and 249 SQL-entries. Last updated: 2024-01-28
-    </div>  
+    <h2>Search</h2>
+    <p>Type to initiate a fuzzy search for quick answers.</p>
+</div>
+<div>
+    <h2>Browse</h2>
+    <p>Enter an asterisk (<b>*</b>) to switch to browsing mode, displaying entries based on selected categories.</p>
+</div>
+<div>
+    <h2>Toggle Categories</h2>
+    <p>Use <code>:c[1-${globalThis.CATS.length}]</code> to toggle categories. <code>:c0</code> toggles all. E.g., <code>:c2</code> toggles the second category.</p>
+</div>
+<div>
+    <h2>Threshold</h2>
+    <p>Default search threshold is 6. Adjust using the magenta slider or <code>:t[0-9]</code> for precision (0 for exact match).</p>
+</div>
+<div>
+    <h2>Dataset</h2>
+    <p>Contains 1259 entries across six categories: BI (167), DA (170), Excel (153), ML (359), Python (161), SQL (249). Last updated: 2024-01-28.</p>
+</div>
+<div>
+    <h2>Copyleft & Copyright</h2>
+    <p>Project licensed under the <a class='help' href="https://github.com/longplay45/interview/blob/main/LICENSE">MIT License</a>. Source code on <a class='help' href="https://github.com/longplay45/interview">GitHub</a>.</p>
+</div>
+<div>
+    <h2>Legals</h2>
+    <p>Learn more about the project: <a class='help' href="https://lp45.net/imprint/">Imprint</a>.</p>
+</div>
 
-    <div>
-        <h2>Copyleft & -right</h2>
-            This project and dataset is licensed under the <a class='help' href="https://github.com/longplay45/interview/blob/main/LICENSE">MIT License</a>. The source code is available on <a class='help' href="https://github.com/longplay45/interview">GitHub</a>.
-    </div> 
-    
-    <div>
-        <h2>Legals</h2>
-            Find out more about the project: <a class='help' href="https://lp45.net/imprint/">Imprint</a>.
-    </div> 
 `
+    elements.searchField.focus()
+    elements.searchField.value = ''
 }
 
 export function threshold() {

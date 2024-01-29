@@ -53,7 +53,7 @@ function addKeyUpListeners(): void {
     elements.searchField.addEventListener('keyup', (event) => {        
         // SEARCHFIELD listener
         
-        const metaKeys = ['Shift', 'Control', 'Alt', 'Meta']
+        // const metaKeys = ['Shift', 'Control', 'Alt', 'Meta']
 
         const searchValue = getSearchFieldValue();
 

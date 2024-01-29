@@ -5,7 +5,6 @@ import { copyObject } from "./utilities";
 import { renderCategories } from "./render";
 import { initEventListeners } from "./events";
 
-
 // data source
 let url:string = '/data.json'
 
