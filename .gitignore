@@ -5,7 +5,7 @@ pnpm-lock.yaml
 
 # folders
 data
-backend/
+backend/*
 build/
 development/
 frontend/dev
