@@ -28,16 +28,28 @@ export function addCategoryListeners(): void {
 
 function addKeyDownListeners(): void {
     document.addEventListener('keydown', (event: KeyboardEvent) => {
-        // set focus on every keystroke
-        elements.searchField.focus()
-        // stop reloading the page wenn input field is active.
-        // #TODO CHANGE TO HTML DIV VERSION
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            elements.searchField.value = ''
+        const key = event.key;
+        const isModifierKey = event.metaKey || event.altKey || event.ctrlKey;
+
+        if (!isModifierKey || (event.metaKey && key === 'c') || (event.altKey && key === 'c') || (event.ctrlKey && key === 'c')) {
+            // Allow Ctrl+C for copy action
+            if ((event.metaKey && key === 'c') || (event.altKey && key === 'c') || (event.ctrlKey && key === 'c')) {
+                // Do nothing special here, allowing the browser to handle Ctrl+C
+                return;
+            }
+
+            // Set focus on every keystroke that's not solely a modifier key or part of an ignored combination
+            elements.searchField.focus();
+
+            if (key === 'Enter') {
+                event.preventDefault();
+                // Clear the search field when Enter is pressed
+                elements.searchField.value = '';
+            }
         }
     });
 }
+
 
 
 function addThresholdSliderListener(): void {

@@ -96,31 +96,35 @@ export function renderSearchResults(data: any[]): void {
 export function help(): void {
     elements.container.innerHTML = `
     <div>
-    <h2>Search</h2>
+    <h2>SEARCH</h2>
     <p>Type to initiate a fuzzy search for quick answers.</p>
 </div>
 <div>
-    <h2>Browse</h2>
-    <p>Enter an asterisk (<b>*</b>) to switch to browsing mode, displaying entries based on selected categories.</p>
+    <h2>BROWSE</h2>
+    <p>Enter an asterisk <code class='help'><b>*</b></code> to switch to browsing mode, displaying entries based on selected categories.</p>
 </div>
 <div>
-    <h2>Toggle Categories</h2>
-    <p>Use <code>:c[1-${globalThis.CATS.length}]</code> to toggle categories. <code>:c0</code> toggles all. E.g., <code>:c2</code> toggles the second category.</p>
+    <h2>TOGGLE CATEGORIES</h2>
+    <p>Use <code class='help'>:c[1-${globalThis.CATS.length}]</code> to toggle categories. <code class='help'>:c0</code> toggles all. E.g., <code class='help'>:c2</code> toggles the second category.</p>
 </div>
 <div>
-    <h2>Threshold</h2>
-    <p>Default search threshold is 6. Adjust using the magenta slider or <code>:t[0-9]</code> for precision (0 for exact match).</p>
+    <h2>THRESHOLD</h2>
+    <p>Default search threshold is 3. Adjust using the magenta slider or <code class='help'>:t[0-9]</code> for precision (0 for exact match).</p>
 </div>
 <div>
-    <h2>Dataset</h2>
-    <p>Contains 1259 entries across six categories: BI (167), DA (170), Excel (153), ML (359), Python (161), SQL (249). Last updated: 2024-01-28.</p>
+    <h2>DATASET</h2>
+    <p>Contains ${globalThis.DATA.length} entries.<p>${render_stats(globalThis.DATA)}</p></p> 
 </div>
 <div>
-    <h2>Copyleft & Copyright</h2>
-    <p>Project licensed under the <a class='help' href="https://github.com/longplay45/interview/blob/main/LICENSE">MIT License</a>. Source code on <a class='help' href="https://github.com/longplay45/interview">GitHub</a>.</p>
+    <h2>MODEL</h2>
+    <p>This dataset was generated using the LLM <a class="help" href="https://huggingface.co/TheBloke/dolphin-2.0-mistral-7B-GGUF">Dolphin 2.0 Mistral 7B</a>.</p> 
 </div>
 <div>
-    <h2>Legals</h2>
+    <h2>COPYLEFT & -RIGHT</h2>
+    <p>By <a class='help' href="https://lp45.net">lonplay45</a>, licensed under the <a class='help' href="https://github.com/longplay45/interview/blob/main/LICENSE">MIT License</a>. Source code on <a class='help' href="https://github.com/longplay45/interview">GitHub</a>.</p>
+</div>
+<div>
+    <h2>LEGALS</h2>
     <p>Learn more about the project: <a class='help' href="https://lp45.net/imprint/">Imprint</a>.</p>
 </div>
 
@@ -128,6 +132,38 @@ export function help(): void {
     elements.searchField.focus()
     elements.searchField.value = ''
 }
+
+
+function render_stats(data: any[]):String {
+    interface Entry {
+        id: number;
+        category_id: number;
+        category: string;
+        title: string;
+        content: string;
+    }
+    
+    const entries: Entry[] = data;
+    
+    const countEntriesPerCategory = (entries: Entry[]): Record<string, number> => {
+        return entries.reduce((accumulator, entry) => {
+            const { category } = entry;
+            accumulator[category] = (accumulator[category] || 0) + 1;
+            return accumulator;
+        }, {} as Record<string, number>);
+    };
+    
+    const categoryCounts = countEntriesPerCategory(entries);
+    const categoryCountsArray: [string, number][] = Object.entries(categoryCounts);
+    const sortedCategoryCountsArray = categoryCountsArray.sort((a, b) => {
+        return a[0].localeCompare(b[0]);
+    });
+    const categoryCountString = sortedCategoryCountsArray.map(([category, count]) => {
+        return `${category}: ${count}`;
+    }).join(", ");
+    return categoryCountString;
+}
+
 
 export function threshold() {
     renderContainer(`Fuzzy search threshold: ${globalThis.THRESHOLD}.`)

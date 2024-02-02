@@ -27,24 +27,19 @@
 
 ## Dataset
 
-This dataset with a total of 1259 entries in six categories was generated using an augmented dolphin-mistral model. Entries:
+![screenshot4](screenshot4.png)
 
-* 167 BI
-* 170 DA
-* 153 Excel
-* 359 ML
-* 161 Python
-* 249 SQL
+This dataset was generated using the [https://huggingface.co/TheBloke/dolphin-2.0-mistral-7B-GGUF"](Dolphin 2.0 Mistral 7B) model.
 
-Last updated: 2024-01-28
+Last updated: 2024-02-01
 
 ## Languages and helpers
 
-- [node.js](https://nodejs.org/en) v20
-- [fuse.js](https://www.fusejs.io) 6.6.2
-- [parcel](https://en.parceljs.org/getting_started.html) 2.9.3
-- [sass](https://sass-lang.com) 1.63.6
-- [typescript](https://www.typescriptlang.org)  5.1.6
+- [node.js](https://nodejs.org/en)
+- [fuse.js](https://www.fusejs.io)
+- [parcel](https://en.parceljs.org/getting_started.html)
+- [sass](https://sass-lang.com)
+- [typescript](https://www.typescriptlang.org)
 
 
 ## Development & build

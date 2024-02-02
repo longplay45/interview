@@ -1,9 +1,12 @@
 # files
-deploy.sh
+
+interview.db
+pnpm-lock.yaml
 
 # folders
 data
 backend/
+build/
 development/
 frontend/dev
 frontend/dist
