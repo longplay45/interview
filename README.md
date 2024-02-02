@@ -1,7 +1,7 @@
 
 # [ INTERVIEW ] - Real-time Knowledgebase
 
-**INTERVIEW**  is an innovative prototype of a real-time knowledgebase interface, created for quick and intuitive access to complex information resources. This dataset encompasses a glossary covering data analytics, engineering, and science, along with categories such as BI, DA, Excel, ML, Python, and SQL.
+**INTERVIEW**  is an innovative prototype of a real-time knowledgebase interface, created for quick and intuitive access to complex information resources. This dataset encompasses a glossary covering data analytics, engineering, and science, along with categories such as BI, DA, Excel, IT, ML, Python, and SQL.
 
 ## Beta preview
 
@@ -9,7 +9,8 @@
 
 ## Screenshots
 
-![screenshot](screenshot.png)
+
+![screenshot1](screenshot1.png)
 
 ![screenshot2](screenshot2.png)
 
@@ -27,9 +28,9 @@
 
 ## Dataset
 
-![screenshot4](screenshot4.png)
+![screenshot5](screenshot4.png)
 
-This dataset was generated using the [https://huggingface.co/TheBloke/dolphin-2.0-mistral-7B-GGUF"](Dolphin 2.0 Mistral 7B) model.
+This dataset was generated using the [https://huggingface.co/TheBloke/dolphin-2.0-mistral-7B-GGUF](Dolphin 2.0 Mistral 7B) model.
 
 Last updated: 2024-02-01
 
