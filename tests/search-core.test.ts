@@ -25,6 +25,13 @@ const DATA: DataEntry[] = [
         category: "SQL",
         title: "window function",
         content: "Window function basics"
+    },
+    {
+        id: 4,
+        category_id: 1,
+        category: "DA",
+        title: "A/B testing",
+        content: "A/B testing basics"
     }
 ];
 
@@ -55,4 +62,17 @@ test("searchEntries performs fuzzy title search", () => {
 
     assert.equal(results.length, 1);
     assert.equal(results[0]?.title, "database");
+});
+
+test("searchEntries falls back for punctuation-fragmented queries", () => {
+    const resultsWithSlash = searchEntries("A / B T ES I", {
+        data: DATA,
+        categories: ["DA", "SQL"],
+        selectedCategories: ["DA", "SQL"],
+        threshold: 0.3,
+        distance: 100
+    });
+
+    assert.equal(resultsWithSlash.length, 1);
+    assert.equal(resultsWithSlash[0]?.title, "A/B testing");
 });

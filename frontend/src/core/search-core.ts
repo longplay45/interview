@@ -51,10 +51,52 @@ export function searchEntries(
         return categoryFiltered;
     }
 
-    return fuzzySearchTitles(
+    const fuzzyResults = fuzzySearchTitles(
         categoryFiltered,
         searchValue,
         config.threshold,
         config.distance
     );
+
+    if (fuzzyResults.length > 0) {
+        return fuzzyResults;
+    }
+
+    return fallbackTokenSearch(categoryFiltered, searchValue);
+}
+
+function fallbackTokenSearch(data: DataEntry[], searchValue: string): DataEntry[] {
+    const normalizedQuery = normalizeForTokenMatch(searchValue);
+    const compactQuery = compactForTokenMatch(searchValue);
+    if (!normalizedQuery) {
+        return [];
+    }
+
+    const tokens = normalizedQuery.split(" ").filter(Boolean);
+    const hasInformativeToken = tokens.some((token) => token.length > 1);
+
+    if (!hasInformativeToken && compactQuery.length < 3) {
+        return [];
+    }
+
+    return data.filter((item) => {
+        const normalizedTitle = normalizeForTokenMatch(item.title);
+        const compactTitle = compactForTokenMatch(item.title);
+        const hasAllTokens = tokens.every((token) => normalizedTitle.includes(token));
+        const hasCompactMatch =
+            compactQuery.length >= 3 && compactTitle.includes(compactQuery);
+        return hasAllTokens || hasCompactMatch;
+    });
+}
+
+function normalizeForTokenMatch(value: string): string {
+    return value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim()
+        .replace(/\s+/g, " ");
+}
+
+function compactForTokenMatch(value: string): string {
+    return normalizeForTokenMatch(value).replace(/\s+/g, "");
 }
