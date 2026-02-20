@@ -1,9 +1,13 @@
 import * as elements from "./elements";
 import { addCategoryListeners, addHelpListeners } from "./events";
-import { highlightSearchString } from "./highlight";
+import { highlightSearchString, highlightTitleElements } from "./highlight";
 import { getSearchFieldValue, searchMe } from "./search";
 import { getState, toggleCategorySelection } from "./state.ts";
 import type { DataEntry } from "./types.ts";
+
+const FIRST_CHUNK_SIZE = 80;
+const CHUNK_SIZE = 120;
+let renderJobId = 0;
 
 export function renderCategories(): void {
     const state = getState();
@@ -52,34 +56,45 @@ export function toggleCat(category: string): void {
 }
 
 export function renderSearchResults(data: DataEntry[]): void {
-    const fragment = document.createDocumentFragment();
+    const currentJobId = ++renderJobId;
+    const container = elements.container;
+    container.replaceChildren();
 
-    data.forEach((item) => {
-        const column = document.createElement("div");
-        column.className = "column";
+    if (data.length === 0) {
+        highlightSearchString();
+        return;
+    }
 
-        const heading = document.createElement("h2");
-        heading.className = "up";
+    let cursor = 0;
 
-        const categorySpan = document.createElement("span");
-        categorySpan.className = "cat";
-        categorySpan.textContent = `${item.category.substring(0, 2)} `;
+    const appendChunk = (size: number): void => {
+        if (currentJobId !== renderJobId) {
+            return;
+        }
 
-        const titleSpan = document.createElement("span");
-        titleSpan.className = "title";
-        titleSpan.textContent = item.title;
+        const fragment = document.createDocumentFragment();
+        const titleElements: HTMLElement[] = [];
+        const end = Math.min(cursor + size, data.length);
 
-        const description = document.createElement("p");
-        description.className = "description";
-        description.textContent = item.content;
+        for (; cursor < end; cursor += 1) {
+            const entry = data[cursor];
+            if (!entry) {
+                continue;
+            }
+            const { column, titleElement } = createResultColumn(entry);
+            fragment.appendChild(column);
+            titleElements.push(titleElement);
+        }
 
-        heading.append(categorySpan, titleSpan);
-        column.append(heading, description);
-        fragment.appendChild(column);
-    });
+        container.appendChild(fragment);
+        highlightTitleElements(titleElements);
 
-    elements.container.replaceChildren(fragment);
-    highlightSearchString();
+        if (cursor < data.length) {
+            scheduleNextChunk(() => appendChunk(CHUNK_SIZE));
+        }
+    };
+
+    appendChunk(FIRST_CHUNK_SIZE);
 }
 
 export function help(): void {
@@ -249,4 +264,42 @@ export function renderContainer(text: string): void {
     const paragraph = document.createElement("p");
     paragraph.textContent = text;
     elements.container.appendChild(paragraph);
+}
+
+function createResultColumn(item: DataEntry): {
+    column: HTMLDivElement;
+    titleElement: HTMLElement;
+} {
+    const column = document.createElement("div");
+    column.className = "column";
+
+    const heading = document.createElement("h2");
+    heading.className = "up";
+
+    const categorySpan = document.createElement("span");
+    categorySpan.className = "cat";
+    categorySpan.textContent = `${item.category.substring(0, 2)} `;
+
+    const titleSpan = document.createElement("span");
+    titleSpan.className = "title";
+    titleSpan.textContent = item.title;
+
+    const description = document.createElement("p");
+    description.className = "description";
+    description.textContent = item.content;
+
+    heading.append(categorySpan, titleSpan);
+    column.append(heading, description);
+
+    return { column, titleElement: titleSpan };
+}
+
+function scheduleNextChunk(renderNext: () => void): void {
+    const idleCallback = globalThis.requestIdleCallback;
+    if (typeof idleCallback === "function") {
+        idleCallback(() => renderNext(), { timeout: 100 });
+        return;
+    }
+
+    requestAnimationFrame(() => renderNext());
 }

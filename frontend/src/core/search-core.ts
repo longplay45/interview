@@ -1,6 +1,8 @@
 import Fuse from "fuse.js";
 import type { DataEntry } from "../types.ts";
 
+const fuseCache = new WeakMap<DataEntry[], Map<string, Fuse<DataEntry>>>();
+
 export interface SearchConfig {
     data: DataEntry[];
     categories: string[];
@@ -26,13 +28,7 @@ export function fuzzySearchTitles(
     threshold: number,
     distance: number
 ): DataEntry[] {
-    const options: Fuse.IFuseOptions<DataEntry> = {
-        keys: ["title"],
-        threshold,
-        distance
-    };
-
-    const fuse = new Fuse(data, options);
+    const fuse = getFuseInstance(data, threshold, distance);
     const results = fuse.search(searchString);
     return results.map(({ item }) => item);
 }
@@ -41,11 +37,10 @@ export function searchEntries(
     searchValue: string,
     config: SearchConfig
 ): DataEntry[] {
-    const baseData = [...config.data];
     const categoryFiltered =
         config.categories.length !== config.selectedCategories.length
-            ? filterBySelectedCategories(baseData, config.selectedCategories)
-            : baseData;
+            ? filterBySelectedCategories(config.data, config.selectedCategories)
+            : config.data;
 
     if (searchValue === "*") {
         return categoryFiltered;
@@ -63,6 +58,33 @@ export function searchEntries(
     }
 
     return fallbackTokenSearch(categoryFiltered, searchValue);
+}
+
+function getFuseInstance(
+    data: DataEntry[],
+    threshold: number,
+    distance: number
+): Fuse<DataEntry> {
+    const cacheKey = `${threshold}|${distance}`;
+    const cacheByOptions = fuseCache.get(data);
+    if (cacheByOptions?.has(cacheKey)) {
+        return cacheByOptions.get(cacheKey) as Fuse<DataEntry>;
+    }
+
+    const options: Fuse.IFuseOptions<DataEntry> = {
+        keys: ["title"],
+        threshold,
+        distance
+    };
+
+    const fuse = new Fuse(data, options);
+    if (cacheByOptions) {
+        cacheByOptions.set(cacheKey, fuse);
+    } else {
+        fuseCache.set(data, new Map([[cacheKey, fuse]]));
+    }
+
+    return fuse;
 }
 
 function fallbackTokenSearch(data: DataEntry[], searchValue: string): DataEntry[] {

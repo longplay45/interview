@@ -4,6 +4,9 @@ import * as render from "./render";
 import { getSearchFieldValue, searchMe } from "./search";
 import { getState } from "./state.ts";
 
+const SEARCH_DEBOUNCE_MS = 100;
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
 export function initEventListeners(): void {
     addKeyUpListeners();
     addKeyDownListeners();
@@ -62,13 +65,30 @@ function addKeyUpListeners(): void {
         const searchValue = getSearchFieldValue();
 
         if (event.key === "Escape") {
+            clearSearchDebounce();
             elements.searchField.value = "";
             render.renderContainer("");
             render.renderSearchResults(searchMe(getSearchFieldValue()));
         } else if (searchValue.startsWith(":")) {
+            clearSearchDebounce();
             keymap.matchString(searchValue);
         } else {
-            render.renderSearchResults(searchMe(searchValue));
+            scheduleSearch(searchValue);
         }
     });
+}
+
+function scheduleSearch(searchValue: string): void {
+    clearSearchDebounce();
+    searchDebounceTimer = setTimeout(() => {
+        render.renderSearchResults(searchMe(searchValue));
+        searchDebounceTimer = null;
+    }, SEARCH_DEBOUNCE_MS);
+}
+
+function clearSearchDebounce(): void {
+    if (searchDebounceTimer !== null) {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = null;
+    }
 }

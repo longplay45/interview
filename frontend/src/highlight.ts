@@ -2,25 +2,26 @@ import { getSearchFieldValue } from "./search";
 
 export function highlightSearchString(): void {
     const titles = document.querySelectorAll<HTMLElement>(".title");
+    highlightTitleElements(Array.from(titles));
+}
 
-    const search = getSearchFieldValue().trim();
-    const searchTerms = search
-        .split(" ")
-        .map((term) => term.trim())
-        .filter((term) => term.length > 0);
+export function highlightTitleElements(
+    titles: Iterable<HTMLElement>
+): void {
+    const searchTerms = getSearchTerms();
 
-    titles.forEach((titleElement) => {
+    for (const titleElement of titles) {
         const storedRaw = titleElement.dataset.rawTitle;
         const rawText = storedRaw ?? titleElement.textContent ?? "";
         titleElement.dataset.rawTitle = rawText;
 
         if (searchTerms.length === 0) {
             titleElement.replaceChildren(document.createTextNode(rawText));
-            return;
+            continue;
         }
 
         titleElement.replaceChildren(buildHighlightFragment(rawText, searchTerms));
-    });
+    }
 
     renderStats(searchTerms.length);
 }
@@ -66,6 +67,14 @@ function buildHighlightFragment(text: string, terms: string[]): DocumentFragment
 
 function escapeRegExp(value: string): string {
     return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getSearchTerms(): string[] {
+    const search = getSearchFieldValue().trim();
+    return search
+        .split(" ")
+        .map((term) => term.trim())
+        .filter((term) => term.length > 0);
 }
 
 function renderStats(tokenCount: number): void {
