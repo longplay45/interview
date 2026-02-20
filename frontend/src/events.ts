@@ -1,11 +1,12 @@
 import * as elements from "./elements";
 import * as keymap from "./keymap";
 import * as render from "./render";
-import { getSearchFieldValue, searchMe } from "./search";
+import { getSearchFieldValue, searchMe, searchMeAsync } from "./search";
 import { getState } from "./state.ts";
 
 const SEARCH_DEBOUNCE_MS = 100;
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+let searchRequestToken = 0;
 
 export function initEventListeners(): void {
     addKeyUpListeners();
@@ -79,14 +80,21 @@ function addKeyUpListeners(): void {
 }
 
 function scheduleSearch(searchValue: string): void {
+    const requestToken = ++searchRequestToken;
     clearSearchDebounce();
     searchDebounceTimer = setTimeout(() => {
-        render.renderSearchResults(searchMe(searchValue));
+        void searchMeAsync(searchValue).then((results) => {
+            if (requestToken !== searchRequestToken) {
+                return;
+            }
+            render.renderSearchResults(results);
+        });
         searchDebounceTimer = null;
     }, SEARCH_DEBOUNCE_MS);
 }
 
 function clearSearchDebounce(): void {
+    searchRequestToken += 1;
     if (searchDebounceTimer !== null) {
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = null;

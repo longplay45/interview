@@ -6,6 +6,14 @@ export interface DataEntry {
     content: string;
 }
 
+export type PackedDataRow = [number, number, string, string, string];
+
+export interface PackedDataset {
+    v: number;
+    k: ["id", "category_id", "category", "title", "content"];
+    rows: PackedDataRow[];
+}
+
 export interface AppState {
     data: DataEntry[];
     categories: string[];

@@ -89,8 +89,8 @@ Place your dataset at `data/data.json` using this schema:
 ]
 ```
 
-`npm run dev` copies `data/data.json` to `frontend/dev/data.json`.
-`npm run build` copies `data/data.json` to `frontend/dist/data.json`.
+`npm run dev` packs `data/data.json` to `data/data.packed.json` and copies it to `frontend/dev/data.packed.json`.
+`npm run build` packs `data/data.json` to `data/data.packed.json` and copies it to `frontend/dist/data.packed.json`.
 
 ## CI
 

@@ -1,6 +1,8 @@
 import fs from "node:fs";
 
 const FILE = "data/data.json";
+const PACKED_FILE = "data/data.packed.json";
+const PACKED_KEYS = ["id", "category_id", "category", "title", "content"];
 
 function fail(message) {
     console.error(`data validation failed: ${message}`);
@@ -107,3 +109,64 @@ if (process.exitCode === 1) {
 console.log(
     `data validation passed: ${parsed.length} rows, ${categoryIdsByName.size} categories`
 );
+
+if (!fs.existsSync(PACKED_FILE)) {
+    fail(`missing packed file ${PACKED_FILE}`);
+    process.exit();
+}
+
+let packed;
+try {
+    packed = JSON.parse(fs.readFileSync(PACKED_FILE, "utf8"));
+} catch (error) {
+    fail(`invalid packed JSON: ${error instanceof Error ? error.message : String(error)}`);
+    process.exit();
+}
+
+if (!packed || typeof packed !== "object") {
+    fail("packed dataset must be an object");
+    process.exit();
+}
+
+if (packed.v !== 1) {
+    fail("packed dataset version must be 1");
+}
+
+if (!Array.isArray(packed.k) || packed.k.join("|") !== PACKED_KEYS.join("|")) {
+    fail("packed dataset keys are invalid");
+}
+
+if (!Array.isArray(packed.rows)) {
+    fail("packed dataset rows must be an array");
+    process.exit();
+}
+
+if (packed.rows.length !== parsed.length) {
+    fail("packed dataset row count does not match data.json");
+}
+
+for (let index = 0; index < packed.rows.length; index += 1) {
+    const packedRow = packed.rows[index];
+    const sourceRow = parsed[index];
+    if (!Array.isArray(packedRow) || packedRow.length !== 5) {
+        fail(`packed row ${index} must be a 5-item array`);
+        continue;
+    }
+
+    const [id, categoryId, category, title, content] = packedRow;
+    if (
+        id !== sourceRow.id ||
+        categoryId !== sourceRow.category_id ||
+        category !== sourceRow.category ||
+        title !== sourceRow.title ||
+        content !== sourceRow.content
+    ) {
+        fail(`packed row ${index} does not match source data`);
+    }
+}
+
+if (process.exitCode === 1) {
+    process.exit();
+}
+
+console.log(`packed validation passed: ${packed.rows.length} rows`);

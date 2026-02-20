@@ -1,6 +1,7 @@
 import { searchEntries } from "./core/search-core.ts";
 import * as elements from "./elements";
 import { getState } from "./state.ts";
+import { initSearchWorker, searchInWorker } from "./search-worker-client.ts";
 import type { DataEntry } from "./types.ts";
 
 interface FilterCache {
@@ -26,6 +27,15 @@ export function searchMe(searchValue: string): DataEntry[] {
         threshold: state.threshold,
         distance: state.distance
     });
+}
+
+export async function searchMeAsync(searchValue: string): Promise<DataEntry[]> {
+    const state = getState();
+    return searchInWorker(searchValue, state);
+}
+
+export function syncSearchWorkerData(data: DataEntry[]): void {
+    initSearchWorker(data);
 }
 
 function getFilteredData(

@@ -1,17 +1,17 @@
-import { fetchJSON } from "./data";
+import { fetchDataEntries } from "./data";
 import { initEventListeners } from "./events";
 import { renderCategories, renderContainer } from "./render";
 import { buildInitState } from "./core/init-core.ts";
 import { resetSearchSettings, resetStateData, setStateData } from "./state.ts";
-import type { DataEntry } from "./types.ts";
+import { syncSearchWorkerData } from "./search";
 
-const DATA_URL = "/data.json";
+const DATA_URL = "/data.packed.json";
 let listenersInitialized = false;
 
 export async function init(): Promise<void> {
     resetSearchSettings();
 
-    const fetchedData = await fetchJSON<DataEntry[]>(DATA_URL);
+    const fetchedData = await fetchDataEntries(DATA_URL);
     const initialState = buildInitState(fetchedData);
 
     if (initialState.fallback) {
@@ -19,6 +19,7 @@ export async function init(): Promise<void> {
     } else {
         setStateData(initialState.data);
     }
+    syncSearchWorkerData(initialState.data);
 
     renderCategories();
 
@@ -28,7 +29,7 @@ export async function init(): Promise<void> {
     }
 
     if (initialState.fallback) {
-        renderContainer("Could not load /data.json.");
+        renderContainer("Could not load /data.packed.json.");
     }
 }
 

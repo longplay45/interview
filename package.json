@@ -3,10 +3,11 @@
   "version": "1.0.9",
   "description": "Source code of the front and -backend for the [interview] app",
   "scripts": {
+    "prepare:data": "node scripts/prepare-data.mjs",
     "delete:dist": "rimraf frontend/dist/",
-    "copy:data": "copyfiles --flat data/data.json frontend/dev",
-    "copy:data:dist": "copyfiles --flat data/data.json frontend/dist",
-    "copy:data:optional": "mkdir -p frontend/dev && copyfiles --flat data/data.json frontend/dev 2>/dev/null || true; [ -f frontend/dev/data.json ] || printf '[]\\n' > frontend/dev/data.json",
+    "copy:data": "npm run prepare:data && copyfiles --flat data/data.packed.json frontend/dev",
+    "copy:data:dist": "npm run prepare:data && copyfiles --flat data/data.packed.json frontend/dist",
+    "copy:data:optional": "npm run prepare:data >/dev/null 2>&1 || true; mkdir -p frontend/dev && copyfiles --flat data/data.packed.json frontend/dev 2>/dev/null || true; [ -f frontend/dev/data.packed.json ] || printf '{\"v\":1,\"k\":[\"id\",\"category_id\",\"category\",\"title\",\"content\"],\"rows\":[]}\\n' > frontend/dev/data.packed.json",
     "copy:static_files": "copyfiles --flat frontend/static_files/* frontend/dev",
     "copy:static_files:dist": "copyfiles --flat frontend/static_files/* frontend/dist",
     "parcel:dev": "parcel frontend/src/index.html --dist-dir frontend/dev/",
@@ -15,7 +16,7 @@
     "dev": "npm run development",
     "typecheck": "tsc --noEmit",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --experimental-strip-types tests/*.test.ts",
-    "validate:data": "node scripts/validate-data.mjs",
+    "validate:data": "npm run prepare:data && node scripts/validate-data.mjs",
     "build": "npm run delete:dist && npm run parcel:build && npm run copy:data:dist && npm run copy:static_files:dist",
     "deploy": "bash deploy.sh"
   },
