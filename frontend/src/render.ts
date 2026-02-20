@@ -1,181 +1,252 @@
-// render.js
-
-import * as elements from "./elements.js";
-import { getSearchFieldValue, searchMe } from "./search.js";
-import { addCategoryListeners, addHelpListeners } from "./events.js";
-import { highlightSearchString } from "./highlight.js";
+import * as elements from "./elements";
+import { addCategoryListeners, addHelpListeners } from "./events";
+import { highlightSearchString } from "./highlight";
+import { getSearchFieldValue, searchMe } from "./search";
+import { getState, toggleCategorySelection } from "./state.ts";
+import type { DataEntry } from "./types.ts";
 
 export function renderCategories(): void {
-    const categories = globalThis.CATS.sort();
-    const ul = document.createElement('ul');
-    ul.classList.add('navigation');
+    const state = getState();
+    const categories = [...state.categories].sort();
 
-    categories.forEach((category:any) => {
-        const isSelected = globalThis.CATS_SELECTED.includes(category);
-        const li = document.createElement('li');
-        li.classList.toggle('selected', isSelected);
-        li.classList.add('category')
-        li.dataset.category = category;
-        li.textContent = category;
-        ul.appendChild(li);
+    const list = document.createElement("ul");
+    list.classList.add("navigation");
+
+    categories.forEach((category) => {
+        const isSelected = state.selectedCategories.includes(category);
+        const item = document.createElement("li");
+        item.classList.toggle("selected", isSelected);
+        item.classList.add("category");
+        item.dataset.category = category;
+        item.textContent = category;
+        list.appendChild(item);
     });
 
-    const li = document.createElement('li');
-    li.classList.add('cat');
-    li.id = 'help';
-    li.textContent = 'Help';
-    ul.appendChild(li);
+    const helpItem = document.createElement("li");
+    helpItem.classList.add("cat");
+    helpItem.id = "help";
+    helpItem.textContent = "Help";
+    list.appendChild(helpItem);
 
-    const elm = document.getElementById('categories');
-    if (elm != null) {
-        elm.innerHTML = '';
-        elm.appendChild(ul);
-
-    }
-    addHelpListeners()
-    addCategoryListeners()
+    elements.categoriesContainer.replaceChildren(list);
+    addHelpListeners();
+    addCategoryListeners();
 }
 
-export function toggleCategory(event: any): void {
-    const clickedCategory = event.target.dataset.category
-    if (clickedCategory) toggleCat(clickedCategory)
+export function toggleCategory(event: Event): void {
+    const target = event.currentTarget as HTMLElement | null;
+    const clickedCategory = target?.dataset.category;
+    if (clickedCategory) {
+        toggleCat(clickedCategory);
+    }
 }
 
 export function toggleCat(category: string): void {
-    console.log('category: ', category)
-    const index = globalThis.CATS_SELECTED.indexOf(category)
+    toggleCategorySelection(category);
+    renderCategories();
+    renderSearchResults(searchMe(getSearchFieldValue()));
 
-    if (index > -1) {
-        globalThis.CATS_SELECTED.splice(index, 1)
-    } else {
-        globalThis.CATS_SELECTED.push(category)
+    if (getState().selectedCategories.length < 1) {
+        elements.container.replaceChildren();
     }
-    renderCategories()
-    renderSearchResults(searchMe(getSearchFieldValue()))
-    if (globalThis.CATS_SELECTED.length < 1) elements.container.innerHTML = ''
 }
 
-export function renderSearchResults(data: any[]): void {
-    const container = elements.container
-    if (container) {
-        container.innerHTML = '';
+export function renderSearchResults(data: DataEntry[]): void {
+    const fragment = document.createDocumentFragment();
 
-        data.forEach(item => {
-            const column = document.createElement('div');
-            column.className = 'column';
+    data.forEach((item) => {
+        const column = document.createElement("div");
+        column.className = "column";
 
-            const h2 = document.createElement('h2');
-            h2.className = 'up';
+        const heading = document.createElement("h2");
+        heading.className = "up";
 
-            const categorySpan = document.createElement('span');
-            categorySpan.className = 'cat';
-            categorySpan.textContent = item.category.substr(0, 2) + ' ';
+        const categorySpan = document.createElement("span");
+        categorySpan.className = "cat";
+        categorySpan.textContent = `${item.category.substring(0, 2)} `;
 
-            const titleSpan = document.createElement('span');
-            titleSpan.className = 'title';
-            titleSpan.textContent = item.title;
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "title";
+        titleSpan.textContent = item.title;
 
-            const description = document.createElement('p');
-            description.className = 'description';
-            description.textContent = item.content;
+        const description = document.createElement("p");
+        description.className = "description";
+        description.textContent = item.content;
 
-            h2.appendChild(categorySpan);
-            h2.appendChild(titleSpan);
-            column.appendChild(h2);
-            column.appendChild(description);
+        heading.append(categorySpan, titleSpan);
+        column.append(heading, description);
+        fragment.appendChild(column);
+    });
 
-            container.appendChild(column);
-        });
-    }
-
+    elements.container.replaceChildren(fragment);
     highlightSearchString();
 }
 
 export function help(): void {
-    elements.container.innerHTML = `
-    <div>
-    <h2>SEARCH</h2>
-    <p>Type to initiate a fuzzy search for quick answers.</p>
-</div>
-<div>
-    <h2>BROWSE</h2>
-    <p>Enter an asterisk <code class='help'><b>*</b></code> to switch to browsing mode, displaying entries based on selected categories.</p>
-</div>
-<div>
-    <h2>TOGGLE CATEGORIES</h2>
-    <p>Use <code class='help'>:c[1-${globalThis.CATS.length}]</code> to toggle categories. <code class='help'>:c0</code> toggles all. E.g., <code class='help'>:c2</code> toggles the second category.</p>
-</div>
-<div>
-    <h2>THRESHOLD</h2>
-    <p>Default search threshold is 3. Adjust using the magenta slider or <code class='help'>:t[0-9]</code> for precision (0 for exact match).</p>
-</div>
-<div>
-    <h2>DATASET</h2>
-    <p>Contains ${globalThis.DATA.length} entries.<p>${render_stats(globalThis.DATA)}</p></p> 
-</div>
-<div>
-    <h2>MODEL</h2>
-    <p>This dataset was generated using the LLM <a class="help" href="https://huggingface.co/TheBloke/dolphin-2.0-mistral-7B-GGUF">Dolphin 2.0 Mistral 7B</a>.</p> 
-</div>
-<div>
-    <h2>COPYLEFT & -RIGHT</h2>
-    <p>By <a class='help' href="https://lp45.net">lonplay45</a>, licensed under the <a class='help' href="https://github.com/longplay45/interview/blob/main/LICENSE">MIT License</a>. Source code on <a class='help' href="https://github.com/longplay45/interview">GitHub</a>.</p>
-</div>
-<div>
-    <h2>LEGALS</h2>
-    <p>Learn more about the project: <a class='help' href="https://lp45.net/imprint/">Imprint</a>.</p>
-</div>
+    const state = getState();
+    const fragment = document.createDocumentFragment();
 
-`
-    elements.searchField.focus()
-    elements.searchField.value = ''
+    fragment.appendChild(
+        createSection("SEARCH", (paragraph) => {
+            paragraph.textContent =
+                "Type to initiate a fuzzy search for quick answers.";
+        })
+    );
+
+    fragment.appendChild(
+        createSection("BROWSE", (paragraph) => {
+            paragraph.append(
+                document.createTextNode("Enter an asterisk "),
+                createCode("*"),
+                document.createTextNode(
+                    " to switch to browsing mode, displaying entries based on selected categories."
+                )
+            );
+        })
+    );
+
+    fragment.appendChild(
+        createSection("TOGGLE CATEGORIES", (paragraph) => {
+            paragraph.append(
+                document.createTextNode("Use "),
+                createCode(`:c[1-${state.categories.length}]`),
+                document.createTextNode(" to toggle categories. "),
+                createCode(":c0"),
+                document.createTextNode(
+                    " toggles all. For example, "),
+                createCode(":c2"),
+                document.createTextNode(" toggles the second category.")
+            );
+        })
+    );
+
+    fragment.appendChild(
+        createSection("THRESHOLD", (paragraph) => {
+            paragraph.append(
+                document.createTextNode(
+                    "Default search threshold is 3. Adjust using the slider or "
+                ),
+                createCode(":t[0-9]"),
+                document.createTextNode(" for precision (0 for exact match).")
+            );
+        })
+    );
+
+    fragment.appendChild(
+        createSection("DATASET", (paragraph) => {
+            paragraph.textContent = `Contains ${state.data.length} entries. ${renderStats(
+                state.data
+            )}`;
+        })
+    );
+
+    fragment.appendChild(
+        createSection("MODEL", (paragraph) => {
+            paragraph.append(
+                document.createTextNode("This dataset was generated using the LLM "),
+                createLink(
+                    "Dolphin 2.0 Mistral 7B",
+                    "https://huggingface.co/TheBloke/dolphin-2.0-mistral-7B-GGUF"
+                ),
+                document.createTextNode(".")
+            );
+        })
+    );
+
+    fragment.appendChild(
+        createSection("COPYLEFT & -RIGHT", (paragraph) => {
+            paragraph.append(
+                document.createTextNode("By "),
+                createLink("lonplay45", "https://lp45.net"),
+                document.createTextNode(
+                    ", licensed under the "
+                ),
+                createLink(
+                    "MIT License",
+                    "https://github.com/longplay45/interview/blob/main/LICENSE"
+                ),
+                document.createTextNode(". Source code on "),
+                createLink(
+                    "GitHub",
+                    "https://github.com/longplay45/interview"
+                ),
+                document.createTextNode(".")
+            );
+        })
+    );
+
+    fragment.appendChild(
+        createSection("LEGALS", (paragraph) => {
+            paragraph.append(
+                document.createTextNode("Learn more about the project: "),
+                createLink("Imprint", "https://lp45.net/imprint/"),
+                document.createTextNode(".")
+            );
+        })
+    );
+
+    elements.container.replaceChildren(fragment);
+    elements.searchField.focus();
+    elements.searchField.value = "";
 }
 
+function createSection(
+    title: string,
+    contentBuilder: (paragraph: HTMLParagraphElement) => void
+): HTMLDivElement {
+    const section = document.createElement("div");
+    const heading = document.createElement("h2");
+    heading.textContent = title;
 
-function render_stats(data: any[]):String {
-    interface Entry {
-        id: number;
-        category_id: number;
-        category: string;
-        title: string;
-        content: string;
-    }
-    
-    const entries: Entry[] = data;
-    
-    const countEntriesPerCategory = (entries: Entry[]): Record<string, number> => {
-        return entries.reduce((accumulator, entry) => {
-            const { category } = entry;
-            accumulator[category] = (accumulator[category] || 0) + 1;
+    const paragraph = document.createElement("p");
+    contentBuilder(paragraph);
+
+    section.append(heading, paragraph);
+    return section;
+}
+
+function createCode(text: string): HTMLElement {
+    const code = document.createElement("code");
+    code.className = "help";
+    code.textContent = text;
+    return code;
+}
+
+function createLink(text: string, href: string): HTMLAnchorElement {
+    const link = document.createElement("a");
+    link.className = "help";
+    link.href = href;
+    link.textContent = text;
+    return link;
+}
+
+function renderStats(data: DataEntry[]): string {
+    const countEntriesPerCategory = data.reduce<Record<string, number>>(
+        (accumulator, entry) => {
+            accumulator[entry.category] = (accumulator[entry.category] || 0) + 1;
             return accumulator;
-        }, {} as Record<string, number>);
-    };
-    
-    const categoryCounts = countEntriesPerCategory(entries);
-    const categoryCountsArray: [string, number][] = Object.entries(categoryCounts);
-    const sortedCategoryCountsArray = categoryCountsArray.sort((a, b) => {
-        return a[0].localeCompare(b[0]);
-    });
-    const categoryCountString = sortedCategoryCountsArray.map(([category, count]) => {
-        return `${escapeHtml(category)}: ${count}`;
-    }).join(", ");
-    return categoryCountString;
+        },
+        {}
+    );
+
+    return Object.entries(countEntriesPerCategory)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([category, count]) => `${category}: ${count}`)
+        .join(", ");
 }
 
-function escapeHtml(value: string): string {
-    return value
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
+export function threshold(): void {
+    renderContainer(`Fuzzy search threshold: ${getState().threshold}.`);
 }
 
+export function renderContainer(text: string): void {
+    elements.container.replaceChildren();
 
-export function threshold() {
-    renderContainer(`Fuzzy search threshold: ${globalThis.THRESHOLD}.`)
-}
+    if (!text) {
+        return;
+    }
 
-export function renderContainer(html: any): void {
-    elements.container.innerHTML = html
+    const paragraph = document.createElement("p");
+    paragraph.textContent = text;
+    elements.container.appendChild(paragraph);
 }

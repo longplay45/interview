@@ -1,50 +1,35 @@
-//app.ts
-
 import { fetchJSON } from "./data";
-import { copyObject } from "./utilities";
-import { renderCategories, renderContainer } from "./render";
 import { initEventListeners } from "./events";
+import { renderCategories, renderContainer } from "./render";
+import { buildInitState } from "./core/init-core.ts";
+import { resetSearchSettings, resetStateData, setStateData } from "./state.ts";
+import type { DataEntry } from "./types.ts";
 
-// data source
-let url:string = '/data.json'
+const DATA_URL = "/data.json";
+let listenersInitialized = false;
 
+export async function init(): Promise<void> {
+    resetSearchSettings();
 
-function init(){
-    /**
-     Load Data
-     Render Categories
-     Initialize Events
-     */
-    fetchJSON<any[]>(url)
-        .then((data) => {
-            globalThis.THRESHOLD = 0.3
-            globalThis.DISTANCE = 100
+    const fetchedData = await fetchJSON<DataEntry[]>(DATA_URL);
+    const initialState = buildInitState(fetchedData);
 
-            if (!Array.isArray(data)) {
-                globalThis.CATS = []
-                globalThis.CATS_SELECTED = []
-                globalThis.DATA = []
-                renderCategories()
-                initEventListeners()
-                renderContainer('Could not load /data.json.')
-                return
-            }
+    if (initialState.fallback) {
+        resetStateData();
+    } else {
+        setStateData(initialState.data);
+    }
 
-            /** Global Variables */
-            globalThis.CATS = Array.from(new Set(data.map(item => item.category)))
-            globalThis.CATS_SELECTED = copyObject(globalThis.CATS)
-            globalThis.DATA = copyObject(data)
-            renderCategories()
-            initEventListeners()
-        })
-        .catch(error => {
-            console.error(error)
-        });
+    renderCategories();
+
+    if (!listenersInitialized) {
+        initEventListeners();
+        listenersInitialized = true;
+    }
+
+    if (initialState.fallback) {
+        renderContainer("Could not load /data.json.");
+    }
 }
 
-init()
-
-
-
-
-
+void init();

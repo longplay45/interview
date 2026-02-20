@@ -1,21 +1,20 @@
-//data.json
-
 export async function fetchJSON<T>(url: string): Promise<T | null> {
     try {
         const response = await fetch(url, {
-            method: 'GET',
+            method: "GET",
             headers: {
-                'Accept': 'application/json'
+                Accept: "application/json"
             },
-            mode: 'cors'
+            mode: "cors"
         });
-        if (response.ok) {
-            const data = await response.json() as T;
-            return data;
-        } else {
-            throw new Error('Error: ' + response.status);
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
         }
-    } catch (error) {
+
+        const data = (await response.json()) as T;
+        return data;
+    } catch (error: unknown) {
         console.error(error);
         return null;
     }

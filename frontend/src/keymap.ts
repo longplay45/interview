@@ -1,64 +1,62 @@
-// keymap 
-
 import * as elements from "./elements";
-import * as render from "./render"
-import { copyObject } from "./utilities";
+import * as render from "./render";
+import { searchMe } from "./search";
+import {
+    getState,
+    toggleAllCategories,
+    toggleCategorySelection
+} from "./state.ts";
+import { parseKeyCommand } from "./core/keymap-core.ts";
+
+function clearSearchField(): void {
+    elements.searchField.value = "";
+}
 
 export function matchString(searchValue: string): void {
+    const state = getState();
+    const action = parseKeyCommand(searchValue, state.categories.length);
 
-    /// :C0-N CATEGORIES
-    const matchesCategories = searchValue.match(/:c(\d+)/i);
-
-    if (matchesCategories) {
-        const categoryId = Number(matchesCategories[1]);
-        const categoryIndex = categoryId - 1;
-
-        if (categoryIndex >= 0 && categoryIndex < globalThis.CATS.length) {
-            render.toggleCat(globalThis.CATS[categoryIndex])
-        } else if (categoryId === 0) {
-            // TOGGLE ALL CATEGORIES ON / OFF
-            if (globalThis.CATS_SELECTED.length === 0) {
-                globalThis.CATS_SELECTED = copyObject(globalThis.CATS)
-            } else {
-                globalThis.CATS_SELECTED = []
+    switch (action.type) {
+        case "toggleCategory": {
+            const category = state.categories[action.categoryIndex];
+            if (!category) {
+                clearSearchField();
+                return;
             }
-            render.renderCategories()
-        } else {
-            elements.searchField.value = ''
-            return
+            toggleCategorySelection(category);
+            clearSearchField();
+            render.renderCategories();
+            render.renderSearchResults(searchMe("*"));
+            return;
         }
-        elements.searchField.value = ''
-    }
-
-    // :D0-1000 Fuzzy Search Distance
-    const matchesDistance = searchValue.match(/:d(\d{1,4})/i);
-    if (matchesDistance) {
-        const distance = Number(matchesDistance[1])
-        if (!Number.isNaN(distance)) {
-            globalThis.DISTANCE = Math.max(0, Math.min(1000, distance))
-            elements.searchField.value = ''
-            render.renderContainer(`Fuzzy search distance: ${globalThis.DISTANCE}.`)
+        case "toggleAllCategories": {
+            toggleAllCategories();
+            clearSearchField();
+            render.renderCategories();
+            render.renderSearchResults(searchMe("*"));
+            return;
         }
-    }
-
-
-    // :F0-9 Fuzzy Search Threshold
-    const matchesThreshold = searchValue.match(/:t([0-9])/i);
-    if (matchesThreshold) {
-        const threshold = Number(matchesThreshold[1])
-        if (!Number.isNaN(threshold)) {
-            globalThis.THRESHOLD = threshold / 10
-            elements.thresholdSlider.value = `${threshold}`
-            elements.searchField.value = ''
-            render.threshold()
+        case "setDistance": {
+            state.distance = action.distance;
+            clearSearchField();
+            render.renderContainer(`Fuzzy search distance: ${state.distance}.`);
+            return;
         }
-    }
-
-    // :H HELP
-    const regexHelp = /:h/gi;
-    const matchesHelp = searchValue.match(regexHelp);
-    if (matchesHelp) {
-        elements.searchField.value = ''
-        render.help()
+        case "setThreshold": {
+            state.threshold = action.thresholdTenths / 10;
+            elements.thresholdSlider.value = `${action.thresholdTenths}`;
+            clearSearchField();
+            render.threshold();
+            return;
+        }
+        case "showHelp": {
+            clearSearchField();
+            render.help();
+            return;
+        }
+        case "none":
+            return;
+        default:
+            return;
     }
 }

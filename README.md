@@ -23,6 +23,7 @@
 |:h|Display help|
 |*|Browser whole dataset|
 |:t0|Set fuzzy search threshold between 0 and 9, where 0 is an exact match|
+|:d100|Set fuzzy search distance (0-1000)|
 |:c0|Toggle all categories on/off|
 |:c[n]|toggle single categorie on/off. Replace [n] with category-nr. counting from left to right. So :c3 whould toggle the third category in your dataset from the right.|
 
@@ -62,6 +63,11 @@ npm run
 npm run dev
 npm run build
 
+# quality checks
+npm run typecheck
+npm run test
+npm run validate:data
+
 # deployment
 npm run deploy
 ```
@@ -74,6 +80,7 @@ Place your dataset at `data/data.json` using this schema:
 [
     {
         "id": ID,
+        "category_id": CATEGORY_ID,
         "category": CATEGORY_NAME,
         "title": ENTRY_TITLE,
         "content": ENTRY_CONTENT
@@ -84,6 +91,14 @@ Place your dataset at `data/data.json` using this schema:
 
 `npm run dev` copies `data/data.json` to `frontend/dev/data.json`.
 `npm run build` copies `data/data.json` to `frontend/dist/data.json`.
+
+## CI
+
+GitHub Actions runs a small verification pipeline on push and pull requests:
+- `npm run typecheck`
+- `npm run test`
+- `npm run validate:data`
+- `npm run build`
 
 ## License
 

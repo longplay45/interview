@@ -1,83 +1,74 @@
-// events.js
-import { getSearchFieldValue, searchMe } from "./search"
-import * as elements from "./elements"
-import * as render from "./render"
-import * as keymap from "./keymap"
-
+import * as elements from "./elements";
+import * as keymap from "./keymap";
+import * as render from "./render";
+import { getSearchFieldValue, searchMe } from "./search";
+import { getState } from "./state.ts";
 
 export function initEventListeners(): void {
-    addKeyUpListeners()
-    addKeyDownListeners()
-    addThresholdSliderListener()
-
+    addKeyUpListeners();
+    addKeyDownListeners();
+    addThresholdSliderListener();
 }
 
 export function addHelpListeners(): void {
-    const helpElement = document.getElementById('help')
-    helpElement?.addEventListener('click', render.help)
+    const helpElement = document.getElementById("help");
+    helpElement?.addEventListener("click", render.help);
 }
 
 export function addCategoryListeners(): void {
-    const categoryElements = document.querySelectorAll('#categories .category')
-    categoryElements.forEach(element => {
-        element.addEventListener('click', render.toggleCategory)
-    })
+    const categoryElements = document.querySelectorAll<HTMLLIElement>(
+        "#categories .category"
+    );
+    categoryElements.forEach((element) => {
+        element.addEventListener("click", render.toggleCategory);
+    });
 }
 
 function addKeyDownListeners(): void {
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-        const key = event.key;
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+        const key = event.key.toLowerCase();
         const isModifierKey = event.metaKey || event.altKey || event.ctrlKey;
+        const isCopyCommand =
+            (event.metaKey && key === "c") ||
+            (event.altKey && key === "c") ||
+            (event.ctrlKey && key === "c");
 
-        if (!isModifierKey || (event.metaKey && key === 'c') || (event.altKey && key === 'c') || (event.ctrlKey && key === 'c')) {
-            // Allow Ctrl+C for copy action
-            if ((event.metaKey && key === 'c') || (event.altKey && key === 'c') || (event.ctrlKey && key === 'c')) {
-                // Do nothing special here, allowing the browser to handle Ctrl+C
+        if (!isModifierKey || isCopyCommand) {
+            if (isCopyCommand) {
                 return;
             }
 
-            // Set focus on every keystroke that's not solely a modifier key or part of an ignored combination
             elements.searchField.focus();
 
-            if (key === 'Enter') {
+            if (key === "enter") {
                 event.preventDefault();
-                // Clear the search field when Enter is pressed
-                elements.searchField.value = '';
+                elements.searchField.value = "";
             }
         }
     });
 }
 
-
-
 function addThresholdSliderListener(): void {
-    elements.thresholdSlider.addEventListener('change', () => {
-        const v: number = +elements.thresholdSlider.value //cast number
-        globalThis.THRESHOLD = v / 10
-        render.renderSearchResults(searchMe(getSearchFieldValue()))
-    })
+    elements.thresholdSlider.addEventListener("change", () => {
+        const state = getState();
+        const sliderValue = Number(elements.thresholdSlider.value);
+        state.threshold = sliderValue / 10;
+        render.renderSearchResults(searchMe(getSearchFieldValue()));
+    });
 }
 
-
 function addKeyUpListeners(): void {
-    elements.searchField.addEventListener('keyup', (event) => {        
-        // SEARCHFIELD listener
-        
-        // const metaKeys = ['Shift', 'Control', 'Alt', 'Meta']
-
+    elements.searchField.addEventListener("keyup", (event: KeyboardEvent) => {
         const searchValue = getSearchFieldValue();
 
-        if (event.key === 'Escape') {
-            //RESET SEARCHFIELD
-            elements.searchField.value = ''
-            render.renderContainer('')
-            render.renderSearchResults(searchMe(getSearchFieldValue()))
-        } else if (searchValue.startsWith(':')) {
-            //KEYMAPPING COMMANDS
-            keymap.matchString(searchValue)            
+        if (event.key === "Escape") {
+            elements.searchField.value = "";
+            render.renderContainer("");
+            render.renderSearchResults(searchMe(getSearchFieldValue()));
+        } else if (searchValue.startsWith(":")) {
+            keymap.matchString(searchValue);
         } else {
-            //DO REGULAR SEARCH
-            render.renderSearchResults(searchMe(searchValue))
+            render.renderSearchResults(searchMe(searchValue));
         }
-    })
+    });
 }
