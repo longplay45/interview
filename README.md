@@ -59,8 +59,8 @@ npm i
 npm run
 
 # frontend
-npm run development
-npm run frontend:build    
+npm run dev
+npm run build
 
 # deployment
 npm run deploy
@@ -68,7 +68,7 @@ npm run deploy
 
 ## Serving your own data
 
-Just create a data.json file with the following schema:
+Place your dataset at `data/data.json` using this schema:
 
 ```json
 [
@@ -81,6 +81,9 @@ Just create a data.json file with the following schema:
     ...
 ]
 ```
+
+`npm run dev` copies `data/data.json` to `frontend/dev/data.json`.
+`npm run build` copies `data/data.json` to `frontend/dist/data.json`.
 
 ## License
 

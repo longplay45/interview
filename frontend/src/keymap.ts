@@ -4,52 +4,52 @@ import * as elements from "./elements";
 import * as render from "./render"
 import { copyObject } from "./utilities";
 
-export function matchString(searchValue: String): void {
+export function matchString(searchValue: string): void {
 
-    /// :C0-9 CATEGORIES
-    const regexCategories = /:c[0-9]/gi;
-    const matchesCategories = searchValue.match(regexCategories);
+    /// :C0-N CATEGORIES
+    const matchesCategories = searchValue.match(/:c(\d+)/i);
 
     if (matchesCategories) {
-        let categorieId: number = +matchesCategories[0][2]
-        categorieId -= 1
-        if (categorieId >= 0) {
-            render.toggleCat(globalThis.CATS[categorieId])
-        } else {
-            //TOGGLE ALL CATEGORIES ON / OFF
-            if (globalThis.CATS_SELECTED.length == 0) {
+        const categoryId = Number(matchesCategories[1]);
+        const categoryIndex = categoryId - 1;
+
+        if (categoryIndex >= 0 && categoryIndex < globalThis.CATS.length) {
+            render.toggleCat(globalThis.CATS[categoryIndex])
+        } else if (categoryId === 0) {
+            // TOGGLE ALL CATEGORIES ON / OFF
+            if (globalThis.CATS_SELECTED.length === 0) {
                 globalThis.CATS_SELECTED = copyObject(globalThis.CATS)
             } else {
                 globalThis.CATS_SELECTED = []
             }
             render.renderCategories()
+        } else {
+            elements.searchField.value = ''
+            return
         }
-        //elements.container.innerHTML = categories
         elements.searchField.value = ''
     }
 
     // :D0-1000 Fuzzy Search Distance
-    const regexDistance = /:t[0-1000]/gi;
-    const matchesDistance = searchValue.match(regexDistance);
+    const matchesDistance = searchValue.match(/:d(\d{1,4})/i);
     if (matchesDistance) {
-        if (matchesDistance.length > 0) {
-            const distance: string = matchesDistance[0][2]
-            if (distance) globalThis.DISTANCE = distance
-            elements.searchField.value = ``
-            render.threshold()
+        const distance = Number(matchesDistance[1])
+        if (!Number.isNaN(distance)) {
+            globalThis.DISTANCE = Math.max(0, Math.min(1000, distance))
+            elements.searchField.value = ''
+            render.renderContainer(`Fuzzy search distance: ${globalThis.DISTANCE}.`)
         }
     }
 
 
     // :F0-9 Fuzzy Search Threshold
-    const regexThreshold = /:t[0-9]/gi;
-    const matchesThreshold = searchValue.match(regexThreshold);
+    const matchesThreshold = searchValue.match(/:t([0-9])/i);
     if (matchesThreshold) {
-        if (matchesThreshold.length > 0) {
-            const threshold: string = matchesThreshold[0][2]
-            if (threshold) globalThis.THRESHOLD = threshold
-            elements.thresholdSlider.value = '' + globalThis.THRESHOLD
-            elements.searchField.value = ``
+        const threshold = Number(matchesThreshold[1])
+        if (!Number.isNaN(threshold)) {
+            globalThis.THRESHOLD = threshold / 10
+            elements.thresholdSlider.value = `${threshold}`
+            elements.searchField.value = ''
             render.threshold()
         }
     }
@@ -62,4 +62,3 @@ export function matchString(searchValue: String): void {
         render.help()
     }
 }
-

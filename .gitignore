@@ -4,7 +4,6 @@ interview.db
 pnpm-lock.yaml
 
 # folders
-data
 backend/*
 build/
 development/
@@ -44,4 +43,3 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-

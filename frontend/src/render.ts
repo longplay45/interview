@@ -51,10 +51,8 @@ export function toggleCat(category: string): void {
         globalThis.CATS_SELECTED.push(category)
     }
     renderCategories()
-    addHelpListeners()
-    addCategoryListeners()
     renderSearchResults(searchMe(getSearchFieldValue()))
-    if (globalThis.CATS_SELECTED < 1) elements.container.innerHTML = ''
+    if (globalThis.CATS_SELECTED.length < 1) elements.container.innerHTML = ''
 }
 
 export function renderSearchResults(data: any[]): void {
@@ -159,9 +157,18 @@ function render_stats(data: any[]):String {
         return a[0].localeCompare(b[0]);
     });
     const categoryCountString = sortedCategoryCountsArray.map(([category, count]) => {
-        return `${category}: ${count}`;
+        return `${escapeHtml(category)}: ${count}`;
     }).join(", ");
     return categoryCountString;
+}
+
+function escapeHtml(value: string): string {
+    return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
 }
 
 

@@ -6,8 +6,6 @@ import * as keymap from "./keymap"
 
 
 export function initEventListeners(): void {
-    addHelpListeners()
-    addCategoryListeners()
     addKeyUpListeners()
     addKeyDownListeners()
     addThresholdSliderListener()
@@ -20,7 +18,7 @@ export function addHelpListeners(): void {
 }
 
 export function addCategoryListeners(): void {
-    const categoryElements = document.querySelectorAll('#categories li')
+    const categoryElements = document.querySelectorAll('#categories .category')
     categoryElements.forEach(element => {
         element.addEventListener('click', render.toggleCategory)
     })
